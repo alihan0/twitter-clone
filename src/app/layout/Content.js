@@ -1,10 +1,39 @@
-import React from 'react'
+"use client";
+import React, {useState, useEffect} from 'react';
 import db from '@/firebase';
 import { PopulerIcon } from '@/icons/icon';
 import TweetBox from '../components/TweetBox';
 import Divider from '../components/Divider';
+import FeedList from '../components/FeedList';
+
+import { collection, getDocs } from "firebase/firestore";
 
 const Content = () => {
+
+  const [tweets, setTweets] = useState([]);
+
+useEffect(() => {
+  const fetchTweets = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "feed"));
+      const tweetData = [];
+      querySnapshot.forEach((doc) => {
+        const tweet = {
+          id: doc.id,
+          data: doc.data()
+        };
+        tweetData.push(tweet);
+        console.log(doc.id, " => ", doc.data());
+      });
+      setTweets(tweetData);
+    } catch (error) {
+      console.error("Error fetching tweets:", error);
+    }
+  };
+
+  fetchTweets();
+}, []);
+
 
   return (
     <main className='flex-1 flex flex-col border-r border-l border-gray-extraLight'>
@@ -22,6 +51,8 @@ const Content = () => {
 
       </div>
       <Divider />
+
+      <FeedList tweets={tweets} />
     </main>
   )
 }

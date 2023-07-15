@@ -1,30 +1,26 @@
 "use client";
-import { EmojiIcon, GIFIcon, ImageIcon, PollIcon, ScheduleIcon } from '@/icons/icon'
-import React, {useState} from 'react'
-import db from "../../firebase";
-import firebase from "@/firebase";
+import { EmojiIcon, GIFIcon, ImageIcon, PollIcon, ScheduleIcon } from '@/icons/icon';
+import React, {useState} from 'react';
+import { collection, doc, setDoc, addDoc, Firestore ,serverTimestamp} from "firebase/firestore"; 
+import db from '@/firebase';
+
 
 const TweetBox = () => {
   const [content, setContent] = useState("");
-  const sendTweet = async () => {
-    if (content !== "") {
-      const tweetCollectionRef = collection(db, 'tweets');
-
-      const addTweet = async () => {
-        const document = await addDoc(tweetCollectionRef, {
-          name : "Alihan Öztürk",
-          username: "@kalemdengi",
-          content,
-        })
-
-        const newCollectionRef = collection(db, 'tweets', document.id, 'name of new subcollection')
-
-        await addDoc(newCollectionRef, {
-          data: "hello world",
-        })
-      }
+  
+  const sendTweet = async() => {
+    if(content !== "" ){
+      const docRef = await addDoc(collection(db, "feed"), {
+        name: "Alihan Öztürk",
+        avatar : "https://cdn-www.bluestacks.com/bs-images/Icon_com.sixjoy.game_.blue_.jpg",
+        timestamp: serverTimestamp(),
+        username: "@alihan",
+        content
+      });
+      setContent("");
     }
-  };
+  }
+  
   
   return (
     <div className="flex-1 flex flex-col mt-2 px-2">
